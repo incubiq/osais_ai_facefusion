@@ -6,6 +6,9 @@ _temp/*
 _profile/*
 
 readme.txt
+ai/assets
+ai/.github
+ai/tests
 
 env_vai
 env_docker_vai
