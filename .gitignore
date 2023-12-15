@@ -1,0 +1,14 @@
+.vscode/
+*__pycache__*
+_input/*
+_output/*
+_temp/*
+_profile/*
+
+readme.txt
+
+env_vai
+env_docker_vai
+env_docker_local
+
+test.py

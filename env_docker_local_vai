@@ -1,0 +1,4 @@
+VAI_ID=xxx
+VAI_SECRET=yyy
+TUNNEL_OSAIS=https://presidential-brave-guest-regarded.trycloudflare.com/
+IS_DEBUG=True

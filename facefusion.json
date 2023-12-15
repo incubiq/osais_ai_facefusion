@@ -1,0 +1,149 @@
+{
+    "engine": "facefusion",
+    "name": "face Fusion",
+    "location": "http://0.0.0.0",
+    "port": 5311,
+    "version": "1.1.3",
+    "description": "Image to Video",
+    "github": "https://github.com/facefusion/facefusion/",
+    "requiresGPU": true,
+    "isFree": false,
+    "default_cost": 30000,
+    "params": [{
+        "in": "url_upload",
+        "out": "-filename",
+        "isMandatory": true,
+        "type": "string",
+        "value": {
+            "default": null
+        },
+        "ui": {
+            "title": "Image input",
+            "widget": "uiSelectPicture",
+            "filterExt": [".png", ".jpg", ".jpeg"],
+            "maxWidth": 1024,
+            "maxHeight": 1024,
+            "minWidth": 256,
+            "minHeight": 256,
+            "maxKb": 1024,
+            "column": 1
+        }
+    }, {
+        "in": "url_video",
+        "out": "-video",
+        "isMandatory": true,
+        "type": "string",
+        "value": {
+            "default": null
+        },
+        "ui": {
+            "title": "Video file input",
+            "widget": "uiSelectFile",
+            "filterExt": [".mp4"],
+            "maxKb": 1024,
+            "column": 1
+        }
+    }, {
+        "in": "keep_fps",
+        "out": "--keep-fps",
+        "isMandatory": false,
+        "type": "boolean",
+        "value": {
+            "default": false
+        },
+        "ui": {
+            "title": "Keep FPS",
+            "widget": "uiSwitch",
+            "column": 2
+        }
+    }, {
+        "in": "skip_audio",
+        "out": "--skip-audio",
+        "isMandatory": false,
+        "type": "boolean",
+        "value": {
+            "default": false
+        },
+        "ui": {
+            "title": "Skip Audio",
+            "widget": "uiSwitch",
+            "column": 2
+        }
+    }, {
+        "in": "keep_temp",
+        "out": "--keep-temp",
+        "isMandatory": false,
+        "type": "boolean",
+        "value": {
+            "default": false
+        }
+    }, {
+        "in": "distance",
+        "out": "--reference-face-distance",
+        "isMandatory": false,
+        "type": "float",
+        "value": {
+            "default": 1.2
+        }
+    }, {
+        "in": "direction",
+        "out": "--face-analyser-direction",
+        "isMandatory": false,
+        "type": "string",
+        "value": {
+            "default": "left-right"
+        }
+    }, {
+        "in": "age",
+        "out": "--face-analyser-age",
+        "isMandatory": false,
+        "type": "string",
+        "value": {
+            "default": null
+        }
+    }, {
+        "in": "gender",
+        "out": "--face-analyser-gender",
+        "isMandatory": false,
+        "type": "string",
+        "value": {
+            "default": null
+        }
+    }, {
+        "in": "face_recognition",
+        "out": "--face-recognition",
+        "isMandatory": true,
+        "type": "string",
+        "value": {
+            "default": "reference",
+            "set":["reference", "many"],
+            "display":["reference", "many"]
+        },
+        "freeAccess": {
+            "default": "reference",
+            "set":["reference", "many"],
+            "display":["reference", "many"]
+        },
+        "ui": {
+            "title": "Reference face",
+            "widget": "uiMultiToggle",
+            "column": 2
+        }
+    }, {
+        "in": "output",
+        "out": "--output",
+        "isMandatory": true,
+        "type": "function",
+        "value": {
+            "default": "$output_uid.mp4"
+        }
+    }, {
+        "in": "watermark",
+        "out": "-watermark",
+        "isMandatory": false,
+        "type": "string",
+        "value": {
+            "default": null
+        }
+    }]
+}
