@@ -1,44 +1,50 @@
 ##
-##      To build the AI_FACEFUSION docker image
+##      To build the AI_FACEFUSION_ docker image
 ##
 
-# base stuff
-FROM yeepeekoo/public:ai_facefusion_
-
-## keep ai in its directory
-RUN mkdir -p ./ai
-RUN chown -R root:root ./ai
-
-## todo : copy all
-# COPY ./ai/checkpoints ./ai/checkpoints
-COPY ./ai/facefusion ./ai/facefusion
-COPY ./ai/runai.py ./ai/runai.py
+# base stuff (from python 311)
+FROM yeepeekoo/public:ai_base_cuda_python311
 
 
-# push again the base files
-COPY ./_temp/static/* ./static
-COPY ./_temp/templates/* ./templates
-COPY ./_temp/osais.json .
-COPY ./_temp/main_fastapi.py .
-COPY ./_temp/main_flask.py .
-COPY ./_temp/main_common.py .
+## face fusion requirements
+RUN pip3 install \
+    gradio \
+    gfpgan \
+    av \
+    safetensors \
+    realesrgan==0.3.0 
 
-COPY ./_temp/osais_auth.py .
-COPY ./_temp/osais_config.py .
-COPY ./_temp/osais_inference.py .
-COPY ./_temp/osais_main.py .
-COPY ./_temp/osais_pricing.py .
-COPY ./_temp/osais_s3.py .
-COPY ./_temp/osais_training.py .
-COPY ./_temp/osais_utils.py .
+RUN pip3 install \
+    numpy==1.23.4 \
+    face_alignment==1.3.5 \
+    imageio==2.19.3 \
+    imageio-ffmpeg==0.4.7 
 
-# copy OSAIS mapping into AI
-COPY ./facefusion.json .
-COPY ./_input/warmup.jpg ./_input/warmup.jpg
-COPY ./_input/warmup.mp4 ./_input/warmup.mp4
+RUN pip3 install \
+    numba \
+    resampy==0.3.1 \
+    pydub==0.25.1  \
+    kornia==0.6.8 
+    
+RUN pip3 install \
+    tqdm \
+    yacs==0.1.8 \
+    pyyaml  \
+    joblib==1.1.0 
+    
+RUN pip3 install \
+    basicsr==1.4.2 \
+    facexlib==0.3.0
 
-# overload config with those default settings
-ENV ENGINE=facefusion
+RUN pip3 install \
+    insightface==0.7.3 \
+    onnx==1.14.1 \
+    onnxruntime==1.16.0 \
+    onnxruntime-gpu==1.16.0 \
+    opennsfw2==0.10.2 \
+    psutil==5.9.5 
+
+RUN pip3 install typing-extensions
 
 # run as a server
-CMD ["uvicorn", "main_fastapi:app", "--host", "0.0.0.0", "--port", "5311"]
+CMD ["uvicorn", "main_fastapi:app", "--host", "0.0.0.0", "--port", "5000"]

@@ -3,10 +3,44 @@
 ##      FACEFUSION AI
 ##
 
-import os
-import sys
-import argparse
+## ------------------------------------------------------------------------
+#       Generic (All AIs)
+## ------------------------------------------------------------------------
+
+import os, sys, argparse, shutil, time
 from datetime import datetime
+
+## for calling back OSAIS from AI
+gNotifyCallback=None
+gNotifyParams=None
+
+## Notifications from AI
+def setNotifyCallback(cb, _aParams): 
+    global gNotifyParams
+    global gNotifyCallback
+
+    gNotifyParams=_aParams
+    gNotifyCallback=cb
+
+## For a debug breakpoint
+def fnDebug(): 
+    return True
+
+## where to save the user profile?
+def fnGetUserdataPath(_username):
+    _path=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    DEFAULT_PROFILE_DIR = os.path.join(_path, '_profile')
+    USER_PROFILE_DIR = os.path.join(DEFAULT_PROFILE_DIR, _username)
+    return {
+        "location": USER_PROFILE_DIR,
+        "voice": False,
+        "picture": True
+    }
+
+## ------------------------------------------------------------------------
+#       Specific
+## ------------------------------------------------------------------------
+
 import urllib.request 
 from PIL import Image 
 
@@ -23,10 +57,6 @@ from facefusion import metadata, wording
 from facefusion.predictor import predict_image, predict_video
 from facefusion.processors.frame.core import get_frame_processors_modules, load_frame_processor_module
 from facefusion.utilities import is_image, is_video, detect_fps, compress_image, merge_video, extract_frames, get_temp_frame_paths, restore_audio, create_temp, move_temp, clear_temp, list_module_names, encode_execution_providers, decode_execution_providers, normalize_output_path
-
-## for calling back OSAIS from AI
-gNotifyParams=None
-gNotifyCallback=None
     
 def limit_resources() -> None:
 	# prevent tensorflow memory leak
@@ -155,18 +185,6 @@ def process_video() -> None:
 	else:
 		print('processing_video_failed')
 
-
-## where to save the user profile?
-def fnGetUserdataPath(_username):
-    _path=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    DEFAULT_PROFILE_DIR = os.path.join(_path, '_profile')
-    USER_PROFILE_DIR = os.path.join(DEFAULT_PROFILE_DIR, _username)
-    return {
-        "location": USER_PROFILE_DIR,
-        "voice": False,
-        "picture": True
-    }
-
 ## WARMUP Data
 def getWarmupData(_id):
     try:
@@ -186,14 +204,6 @@ def getWarmupData(_id):
     except Exception as err:
         print("Could not call warm up!\r\n")
         return None
-
-## Notifications from AI
-def setNotifyCallback(cb, _aParams): 
-    global gNotifyParams
-    global gNotifyCallback
-
-    gNotifyParams=_aParams
-    gNotifyCallback=cb
 
 ## RUN AI
 def fnRun(_args): 
@@ -253,6 +263,7 @@ def fnRun(_args):
         vq_parser.add_argument("-cimg", "--batch_size", type=int, help="How many output", default=1, dest='batch_size')
 
         # frame processors
+        vq_parser.add_argument('--enhance-face', help = 'enhance_face_help', dest = 'enhance_face', default = "False")      ## this is our added param
         vq_parser.add_argument('--frame-processors', help = 'frame_processors_help', dest = 'frame_processors', default = [ 'face_swapper' ], nargs = '+')
         program = argparse.ArgumentParser()
 
@@ -263,7 +274,7 @@ def fnRun(_args):
             frame_processor_module = load_frame_processor_module(frame_processor)
             frame_processor_module.register_args(program)
 	    
-            ## !!! had top Fkin hack the original code, so if upgrading... this will break
+            ## !!! had top Fkin hack the original code, so if upgrading... this will break (as well as in other files cos of the added notifs)
             _dict = MultiDict([])
             _tmpArgs = program.parse_args(_dict)
             frame_processor_module.apply_argsAlt(_tmpArgs)
@@ -317,8 +328,11 @@ def fnRun(_args):
         facefusion.globals.output_video_quality = args.output_video_quality
         facefusion.globals.keep_fps = (args.keep_fps== "True" or args.keep_fps == "true")
         facefusion.globals.skip_audio = (args.skip_audio== "True" or args.skip_audio == "true")
+        
         # frame processors
         facefusion.globals.frame_processors = args.frame_processors
+        if args.enhance_face=="True":       ## sometimes we can force face enhancer...
+                facefusion.globals.frame_processors = [ 'face_swapper', 'face_enhancer']
         # uis
         ## facefusion.globals.ui_layouts = args.ui_layouts
 

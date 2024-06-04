@@ -44,5 +44,7 @@ RUN pip3 install \
     opennsfw2==0.10.2 \
     psutil==5.9.5 
 
+RUN pip3 install typing-extensions
+
 # run as a server
 CMD ["uvicorn", "main_fastapi:app", "--host", "0.0.0.0", "--port", "5000"]

@@ -70,7 +70,7 @@ def multi_process_frames(source_path : str, temp_frame_paths : List[str], proces
 	global gNotifyProgress
 	gNotifyProgress=0.35
 
-	if facefusion.globals.fnNotifyCallback:
+	if hasattr(facefusion.globals, 'fnNotifyCallback'):
 		facefusion.globals.fnNotifyCallback(facefusion.globals.objNotifyParams, "Init. AI workers (this may take a while...)", gNotifyProgress)
 
 	with tqdm(total = len(temp_frame_paths), desc = wording.get('processing'), unit = 'frame', dynamic_ncols = True, bar_format = progress_bar_format) as progress:
@@ -125,7 +125,7 @@ def update_progress(progress : Any = None) -> None:
 		bNotify=True
 		gNotifyProgress=0.8
 	
-	if bNotify and facefusion.globals.fnNotifyCallback:
+	if bNotify and hasattr(facefusion.globals, 'fnNotifyCallback'):
 		facefusion.globals.fnNotifyCallback(facefusion.globals.objNotifyParams, status, gNotifyProgress)
 
 	## normal processing...
